@@ -21,6 +21,7 @@ contract ProjectX {
     mapping (uint256 => uint256) private goods_price;     // goods_number to goods_price
     mapping (uint256 => bytes32) private goods_description;
     mapping (uint256 => address) private goods_providing_vendor;
+    mapping (uint256 => bool) private goods_valid;
     
     // type info
     mapping (string => uint) private type_map;
@@ -147,6 +148,7 @@ contract ProjectX {
     function buy_goods(uint256 goods_number, uint quantity){
         require(is_valid(msg.sender), "Invalid sender!");
         require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
+        require(goods_valid[goods_number], "Invalid goods.");
 
         if(types[msg.sender] == type_map["Recipient"]){
             require(msg.value >= goods_price[goods_number] * quantity, "Not enough tokens.");
@@ -179,20 +181,28 @@ contract ProjectX {
         receiver.transfer(amount);
     }
     
-    // // Only vendors can register goods
-    function register_goods(uint256 goods_number, uint256 price, bytes32 description){
+    // Only vendors can register goods
+    function vendor_register_goods(uint256 goods_number, uint256 price, bytes32 description){
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
         require(is_valid(msg.sender), "Invalid vendor!");
-        require(goods_description[goods_number] == bytes32(0x0), "Can't register goods twice.");
+        require(goods_description[goods_number] == bytes32(0x0), "Goods_number exists.");
 
-        goods_price[goods_number] = price;
+        goods_price[goods_number] = price;  // unit is Drip
         goods_description[goods_number] = description;
         goods_providing_vendor[goods_number] = msg.sender;
+        goods_valid[goods_number] = true;
+    }
+    // Only vendors can cancel goods
+    function vendor_cancel_goods(uint256 goods_number){
+        require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
+        require(is_valid(msg.sender), "Invalid vendor!");
+        require(goods_providing_vendor[goods_number] == msg.sender, "Can't cancel goods that don't belong to you.");
+
+        goods_valid[goods_number] = false;
     }
 
-
     // Only vendors can cash out
-    function withdraw(uint256 amount) public {
+    function vendor_withdraw(uint256 amount) public {
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
         require(is_valid(msg.sender), "Invalid vendor!");
         require(Vendor_pool[msg.sender] > amount, "Unsuffcient balance!");
@@ -202,7 +212,7 @@ contract ProjectX {
     }
 
     // cash out all the tokens
-    function withdraw_all() public {
+    function vendor_withdraw_all() public {
         withdraw(Vendor_pool[msg.sender]);
     }
 
