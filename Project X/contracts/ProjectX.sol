@@ -18,6 +18,9 @@ contract ProjectX {
     mapping (address => uint256) private CrowdFund_donation_pool;
     mapping (address => uint256) private CrowdFund_donation_target;
     mapping (address => uint256) private Vendor_pool;
+    mapping (uint256 => uint256) private goods_price;     // goods_number to goods_price
+    mapping (uint256 => bytes32) private goods_description;
+    mapping (uint256 => address) private goods_providing_vendor;
     
     // type info
     mapping (string => uint) private type_map;
@@ -59,7 +62,7 @@ contract ProjectX {
     
     // staking to ensure safety
     function stake() public payable {
-        require(!is_valid(msg.sender), "Only invalid address can be described!");
+        require(types[msg.sender] != uint(0x0), "Need to register first!");
         
         // One can stake as many times as one wants.
         // // require(staking_fund[msg.sender] == 0, "Only unstaked address can be staked!");
@@ -77,15 +80,16 @@ contract ProjectX {
     
     // describe an adress's purpose
     function describe(bytes32 encripted_description_hash) public {
-        require(is_valid(msg.sender), "Only valid address can be described!");
+        require(types[msg.sender] != uint(0x0), "Need to register first!");
+
         descriptions[msg.sender] = encripted_description_hash;
     }
 
     // validate an address
     function validate() public {
-        require(lock[msg.sender] != true, "Locked address, can't be validated!");
+        require(!is_locked(msg.sender), "Locked address, can't be validated!");
         require(!is_valid(msg.sender), "Only invalid address can be validated!");
-        require(staking_fund[msg.sender] != 0, "Only unstaked address can be staked!");
+        require(staking_fund[msg.sender] != 0, "Need staking before validation.");
         require(descriptions[msg.sender] != bytes32(0x0), "Need description before validation.");
         
         // TODO: branches to be designed
@@ -140,8 +144,23 @@ contract ProjectX {
     }
 
     // Buy all kinds of goods from vendors
-    function buy(){
+    function buy_goods(uint256 goods_number, uint quantity){
+        require(is_valid(msg.sender), "Invalid sender!");
+        require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
 
+        if(types[msg.sender] == type_map["Recipient"]){
+            require(msg.value >= goods_price[goods_number] * quantity, "Not enough tokens.");
+
+            Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+            // refund the overflows
+            msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
+        } else{
+            require(NPO_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Insuffcient NPO's donation pool.");
+            NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
+            Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+            // refund misprovided CFXs (if there are any)
+            msg.sender.transfer(msg.value);
+        }
     }
 
     // Only NPO to Recipient
@@ -160,7 +179,18 @@ contract ProjectX {
         receiver.transfer(amount);
     }
     
-    
+    // // Only vendors can register goods
+    function register_goods(uint256 goods_number, uint256 price, bytes32 description){
+        require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
+        require(is_valid(msg.sender), "Invalid vendor!");
+        require(goods_description[goods_number] == bytes32(0x0), "Can't register goods twice.");
+
+        goods_price[goods_number] = price;
+        goods_description[goods_number] = description;
+        goods_providing_vendor[goods_number] = msg.sender;
+    }
+
+
     // Only vendors can cash out
     function withdraw(uint256 amount) public {
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
@@ -228,6 +258,9 @@ contract ProjectX {
     function is_valid(address a) private view returns(bool) {
         return validations[a];
     }
+    function is_locked(address a) private view returns(bool) {
+        return lock[a];
+    }
 
     /// admin control
     ///
@@ -246,6 +279,11 @@ contract ProjectX {
     function unlock(address a) public {
         require(msg.sender == project_admin, "Admin permission denied.");
         lock[a] = false;
+    }
+
+    // test functions
+    function get_test_encripted_description_hash(bytes32) public view {
+        return sha256("2333. What a miracle!");
     }
 
 }
