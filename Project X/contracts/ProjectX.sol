@@ -15,6 +15,7 @@ contract ProjectX {
     mapping (address => uint256) private staking_fund;
     mapping (address => uint256) private donation_record;
     mapping (address => uint256) private NPO_donation_pool;
+    mapping (address => uint256) private Recipient_donation_pool;
     mapping (address => uint256) private CrowdFund_donation_pool;
     mapping (address => uint256) private CrowdFund_donation_target;
     mapping (address => uint256) private Vendor_pool;
@@ -116,12 +117,13 @@ contract ProjectX {
         require(types[receiver] != type_map["Vendor"], "Only NOT vendors can be donated to!");
 
         require(msg.value > 0, "Invalid donation!");
-        
+
         // Seperate situations
         if(types[receiver] == type_map["Recipient"]){
             // support transferring directly from sender to receiver
+            
+            //Recipient_donation_pool[receiver] += msg.value;
             receiver.transfer(msg.value);
-
             donation_record[msg.sender] += msg.value;
         }
         else if(types[receiver] == type_map["NPO"]){
@@ -145,7 +147,7 @@ contract ProjectX {
     }
 
     // Buy all kinds of goods from vendors
-    function buy_goods(uint256 goods_number, uint quantity){
+    function buy_goods(uint256 goods_number, uint quantity) public payable {
         require(is_valid(msg.sender), "Invalid sender!");
         require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
         require(goods_valid[goods_number], "Invalid goods.");
@@ -167,7 +169,7 @@ contract ProjectX {
 
     // Only NPO to Recipient
     // all amount'unit is Drip
-    function distribute(address receiver, uint256 amount) public{
+    function distribute(address payable receiver, uint256 amount) public payable {
         require(is_valid(msg.sender), "Invalid sender!");
         require(is_valid(receiver), "Invalid receiver!");
 
@@ -182,7 +184,7 @@ contract ProjectX {
     }
     
     // Only vendors can register goods
-    function vendor_register_goods(uint256 goods_number, uint256 price, bytes32 description){
+    function vendor_register_goods(uint256 goods_number, uint256 price, bytes32 description) public{
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
         require(is_valid(msg.sender), "Invalid vendor!");
         require(goods_description[goods_number] == bytes32(0x0), "Goods_number exists.");
@@ -193,7 +195,7 @@ contract ProjectX {
         goods_valid[goods_number] = true;
     }
     // Only vendors can cancel goods
-    function vendor_cancel_goods(uint256 goods_number){
+    function vendor_cancel_goods(uint256 goods_number) public{
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
         require(is_valid(msg.sender), "Invalid vendor!");
         require(goods_providing_vendor[goods_number] == msg.sender, "Can't cancel goods that don't belong to you.");
@@ -202,7 +204,7 @@ contract ProjectX {
     }
 
     // Only vendors can cash out
-    function vendor_withdraw(uint256 amount) public {
+    function vendor_withdraw(uint256 amount) public payable {
         require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
         require(is_valid(msg.sender), "Invalid vendor!");
         require(Vendor_pool[msg.sender] > amount, "Unsuffcient balance!");
@@ -213,7 +215,7 @@ contract ProjectX {
 
     // cash out all the tokens
     function vendor_withdraw_all() public {
-        withdraw(Vendor_pool[msg.sender]);
+        vendor_withdraw(Vendor_pool[msg.sender]);
     }
 
     // cancel validation and get staking tokens back
@@ -234,6 +236,10 @@ contract ProjectX {
     function get_donation_record(address a) public view returns (uint256){
         require(types[a] == type_map["Donor"], "Not a donor!");
         return donation_record[a];
+    }
+    function get_Recipient_donation_pool(address a) public view returns (uint256){
+        require(types[a] == type_map["Recipient"], "Not a recipient!");
+        return Recipient_donation_pool[a];
     }
     function get_NPO_donation_pool(address a) public view returns (uint256){
         require(types[a] == type_map["NPO"], "Not an NPO!");
@@ -281,7 +287,7 @@ contract ProjectX {
         staking_price[type_list[type_id]] = amount;
     }
     // admin can lock adresses with suspicious behaviors
-    function lock(address a) public {
+    function lock_address(address a) public {
         require(msg.sender == project_admin, "Admin permission denied.");
         lock[a] = true;
         validations[a] = false;
@@ -292,8 +298,8 @@ contract ProjectX {
     }
 
     // test functions
-    function get_test_encripted_description_hash(bytes32) public view {
-        return sha256("2333. What a miracle!");
-    }
+    //function get_test_encripted_description_hash(bytes32) public view {
+    //    return bytes32("2333. What a miracle!");
+    //}
 
 }
