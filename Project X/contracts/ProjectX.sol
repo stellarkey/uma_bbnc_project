@@ -1,5 +1,7 @@
 pragma solidity >=0.5.0;
 
+import "./SponsorWhitelistControl.sol";
+
 contract ProjectX {
     // admin records
     address project_admin;
@@ -45,6 +47,14 @@ contract ProjectX {
         staking_price["NPO"] = 233 * 1e18;
         staking_price["Vendor"] = 666 * 1e18;
         staking_price["CrowdFund"] = 2333 * 1e18;
+
+        // Whitelist sponsor settings
+        address addr = 0x0888000000000000000000000000000000000001;  // Whitelist contract address
+        SponsorWhitelistControl swc = SponsorWhitelistControl(addr);
+        
+        address[] memory a = new address[](1);
+        a[0] = 0x0000000000000000000000000000000000000000;  // sponsor for everyone
+        swc.add_privilege(a);
     }
     
     function register(uint type_id) public {
@@ -254,12 +264,20 @@ contract ProjectX {
     }
 
     // anyone can sponsor for the transaction fee
-    function sponsor() public payable {
-
+    // sponsorship
+    function sponsor() public payable{
+        // TODO
+        require(msg.value > 1e17, "Sponsoring amout is at least 0.1 CFX each time.");
+        address addr = 0x0888000000000000000000000000000000000001;  // Whitelist contract address
+        SponsorWhitelistControl swc = SponsorWhitelistControl(addr);
+        swc.set_sponsor_for_gas(
+            address(this), // this contract's address
+            100000000000000000 // upper limit per transaction: 0.1 CFX
+        );
     }
 
 
-
+    // view only functions
     function get_admin_donation_pool() public view returns (uint256){
         return admin_donation_pool;
     }
