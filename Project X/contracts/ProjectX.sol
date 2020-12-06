@@ -106,7 +106,7 @@ contract ProjectX {
         donation_record[msg.sender] += msg.value;
     }
     
-    // p2p donation
+    // Donor: p2p donation using CFX
     function donate_to(address payable receiver) public payable {
         require(is_valid(msg.sender), "Invalid sender!");
         require(is_valid(receiver), "Invalid receiver!");
@@ -122,8 +122,8 @@ contract ProjectX {
         if(types[receiver] == type_map["Recipient"]){
             // support transferring directly from sender to receiver
             
-            //Recipient_donation_pool[receiver] += msg.value;
-            receiver.transfer(msg.value);
+            Recipient_donation_pool[receiver] += msg.value;
+            //receiver.transfer(msg.value);
             donation_record[msg.sender] += msg.value;
         }
         else if(types[receiver] == type_map["NPO"]){
@@ -153,23 +153,27 @@ contract ProjectX {
         require(goods_valid[goods_number], "Invalid goods.");
 
         if(types[msg.sender] == type_map["Recipient"]){
-            require(msg.value >= goods_price[goods_number] * quantity, "Not enough tokens.");
+            require(Recipient_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Not enough tokens.");
 
             Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
-            // refund the overflows
-            msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
+            // // refund the overflows
+            //msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
+            Recipient_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
         } else{
             require(NPO_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Insuffcient NPO's donation pool.");
-            NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
+            
             Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
-            // refund misprovided CFXs (if there are any)
-            msg.sender.transfer(msg.value);
+            
+            NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
         }
+
+        // refund misprovided CFXs (if there are any)
+        msg.sender.transfer(msg.value);
     }
 
     // Only NPO to Recipient
     // all amount'unit is Drip
-    function distribute(address payable receiver, uint256 amount) public payable {
+    function NPO_distribute(address payable receiver, uint256 amount) public payable {
         require(is_valid(msg.sender), "Invalid sender!");
         require(is_valid(receiver), "Invalid receiver!");
 
@@ -179,8 +183,9 @@ contract ProjectX {
         require(NPO_donation_pool[msg.sender] >= amount, "Insuffcient NPO's donation pool.");
         
         NPO_donation_pool[msg.sender] -= amount;
-        // Another direct transferring, it's out of the system
-        receiver.transfer(amount);
+        //// Another direct transferring, it's out of the system
+        //receiver.transfer(amount);
+        Recipient_donation_pool[receiver] += amount;
     }
     
     // Only vendors can register goods
@@ -205,7 +210,7 @@ contract ProjectX {
 
     // Only vendors can cash out
     function vendor_withdraw(uint256 amount) public payable {
-        require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw!");
+        require(types[msg.sender] == type_map["Vendor"], "Only vendors can withdraw here!");
         require(is_valid(msg.sender), "Invalid vendor!");
         require(Vendor_pool[msg.sender] > amount, "Unsuffcient balance!");
 
@@ -218,9 +223,34 @@ contract ProjectX {
         vendor_withdraw(Vendor_pool[msg.sender]);
     }
 
+    // Only recipients can cash out
+    function recipient_withdraw(uint256 amount) public payable {
+        require(types[msg.sender] == type_map["Recipient"], "Only recipients can withdraw here!");
+        require(is_valid(msg.sender), "Invalid recipient!");
+        require(Recipient_donation_pool[msg.sender] > amount, "Unsuffcient balance!");
+
+        Recipient_donation_pool[msg.sender] -= amount;
+        msg.sender.transfer(amount);
+    }
+
+    // cash out all the tokens
+    function recipient_withdraw_all() public {
+        recipient_withdraw(Recipient_donation_pool[msg.sender]);
+    }
+
     // cancel validation and get staking tokens back
     function quit() public {
+        require(types[msg.sender] != uint(0x0), "Not a user.");
+        require(is_valid(msg.sender), "Must be a valid user.");
+        require(types[msg.sender] != type_map["Donor"], "Donors dont't need to quit!");
+
+        validations[msg.sender] = false;
         
+        msg.sender.transfer( staking_fund[msg.sender] );
+        staking_fund[msg.sender] = 0;
+
+        // // optioncal
+        // descriptions[msg.sender] == bytes32(0x0);
     }
 
     // anyone can sponsor for the transaction fee
