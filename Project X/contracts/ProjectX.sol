@@ -263,8 +263,7 @@ contract ProjectX {
 
     // anyone can sponsor for the transaction fee
     // sponsorship
-    function sponsor() public payable{
-        // TODO
+    function sponsor_gas() public payable{
         require(msg.value >= 1e20, "Sponsoring amout is at least 100 CFX each time.");
 
         address payable swc_address = 0x0888000000000000000000000000000000000001;
@@ -272,6 +271,17 @@ contract ProjectX {
         swc.setSponsorForGas{value: msg.value}(
             address(this),             // this contract's address
             100000000000000000         // upper limit per transaction: 0.1 CFX
+        );
+        
+    }
+
+    function sponsor_collateral() public payable{
+        require(msg.value >= 1e20, "Sponsoring amout is at least 100 CFX each time.");
+
+        address payable swc_address = 0x0888000000000000000000000000000000000001;
+        SponsorWhitelistControl swc = SponsorWhitelistControl(swc_address);  // Whitelist contract address
+        swc.setSponsorForCollateral{value: msg.value}(
+            address(this)              // this contract's address
         );
         
     }
@@ -318,6 +328,21 @@ contract ProjectX {
         require(type_id > 0 && type_id < type_list.length, "Invalid type_id!");
         return staking_price[type_list[type_id]];
     }
+
+    function get_SponsoredBalanceForGas() public view returns(uint) {
+        address payable swc_address = 0x0888000000000000000000000000000000000001;
+        SponsorWhitelistControl swc = SponsorWhitelistControl(swc_address);  // Whitelist contract address
+        
+        return swc.getSponsoredBalanceForGas(address(this));
+    }
+
+    function get_SponsoredBalanceForCollateral() public view returns(uint) {
+        address payable swc_address = 0x0888000000000000000000000000000000000001;
+        SponsorWhitelistControl swc = SponsorWhitelistControl(swc_address);  // Whitelist contract address
+        
+        return swc.getSponsoredBalanceForCollateral(address(this));
+    }
+
 
     function is_valid(address a) private view returns(bool) {
         return validations[a];
