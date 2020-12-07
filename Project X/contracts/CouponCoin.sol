@@ -2,7 +2,10 @@ pragma solidity >=0.5.0;
 
 import "./SponsorWhitelistControl.sol";
 
-contract Coin {
+// TODO: directional donation, donors donate specified coupons and they are restricted to buy specified goods
+// This can avoid misusage of donations in a way
+
+contract CouponCoin {
     address public minter;
     mapping (address => uint) private balances;
 
@@ -10,7 +13,7 @@ contract Coin {
 
     event Sent(address from, address to, uint amount);
 
-    constructor() public {
+    constructor() {
         minter = msg.sender;
     }
 
@@ -34,12 +37,12 @@ contract Coin {
     function add_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.add_privilege(a);
+        SPONSOR.addPrivilege(a);
     }
 
     function remove_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.remove_privilege(a);
+        SPONSOR.removePrivilege(a);
     }
 }

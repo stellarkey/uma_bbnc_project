@@ -49,12 +49,10 @@ contract ProjectX {
         staking_price["CrowdFund"] = 2333 * 1e18;
 
         // Whitelist sponsor settings
-        address addr = 0x0888000000000000000000000000000000000001;  // Whitelist contract address
-        SponsorWhitelistControl swc = SponsorWhitelistControl(addr);
-        
+        SponsorWhitelistControl swc = SponsorWhitelistControl(0x0888000000000000000000000000000000000001); // Whitelist contract address
         address[] memory a = new address[](1);
         a[0] = 0x0000000000000000000000000000000000000000;  // sponsor for everyone
-        swc.add_privilege(a);
+        swc.addPrivilege(a);
     }
     
     function register(uint type_id) public {
@@ -267,13 +265,15 @@ contract ProjectX {
     // sponsorship
     function sponsor() public payable{
         // TODO
-        require(msg.value > 1e17, "Sponsoring amout is at least 0.1 CFX each time.");
-        address addr = 0x0888000000000000000000000000000000000001;  // Whitelist contract address
-        SponsorWhitelistControl swc = SponsorWhitelistControl(addr);
-        swc.set_sponsor_for_gas(
-            address(this), // this contract's address
-            100000000000000000 // upper limit per transaction: 0.1 CFX
+        require(msg.value >= 1e20, "Sponsoring amout is at least 100 CFX each time.");
+
+        address payable swc_address = 0x0888000000000000000000000000000000000001;
+        SponsorWhitelistControl swc = SponsorWhitelistControl(swc_address);  // Whitelist contract address
+        swc.setSponsorForGas(
+            address(this),             // this contract's address
+            100000000000000000         // upper limit per transaction: 0.1 CFX
         );
+        swc_address.transfer(msg.value);
     }
 
 
