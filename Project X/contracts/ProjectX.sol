@@ -269,11 +269,11 @@ contract ProjectX {
 
         address payable swc_address = 0x0888000000000000000000000000000000000001;
         SponsorWhitelistControl swc = SponsorWhitelistControl(swc_address);  // Whitelist contract address
-        swc.setSponsorForGas(
+        swc.setSponsorForGas{value: msg.value}(
             address(this),             // this contract's address
             100000000000000000         // upper limit per transaction: 0.1 CFX
         );
-        swc_address.transfer(msg.value);
+        
     }
 
 
