@@ -369,6 +369,11 @@ contract ProjectX {
         require(msg.sender == project_admin, "Admin permission denied.");
         lock[a] = false;
     }
+    function admin_distribute(address receiver) public{
+
+        
+
+    }
 
     // test functions
     //function get_test_encripted_description_hash(bytes32) public view {
