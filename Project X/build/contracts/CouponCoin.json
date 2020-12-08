@@ -141,7 +141,7 @@
         169
       ],
       "SponsorWhitelistControl": [
-        1834
+        1857
       ]
     },
     "id": 170,
@@ -164,7 +164,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 170,
-        "sourceUnit": 1835,
+        "sourceUnit": 1858,
         "src": "28:39:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -266,17 +266,17 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+              "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
               "typeString": "contract SponsorWhitelistControl"
             },
             "typeName": {
               "id": 9,
               "name": "SponsorWhitelistControl",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1834,
+              "referencedDeclaration": 1857,
               "src": "340:23:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                 "typeString": "contract SponsorWhitelistControl"
               }
             },
@@ -354,10 +354,10 @@
                 "name": "SponsorWhitelistControl",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 1834,
+                "referencedDeclaration": 1857,
                 "src": "391:23:0",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_type$_t_contract$_SponsorWhitelistControl_$1834_$",
+                  "typeIdentifier": "t_type$_t_contract$_SponsorWhitelistControl_$1857_$",
                   "typeString": "type(contract SponsorWhitelistControl)"
                 }
               },
@@ -372,7 +372,7 @@
               "src": "391:76:0",
               "tryCall": false,
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                 "typeString": "contract SponsorWhitelistControl"
               }
             },
@@ -1748,7 +1748,7 @@
                         "referencedDeclaration": 16,
                         "src": "1314:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                           "typeString": "contract SponsorWhitelistControl"
                         }
                       },
@@ -1759,7 +1759,7 @@
                       "lValueRequested": false,
                       "memberName": "addPrivilege",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 1826,
+                      "referencedDeclaration": 1849,
                       "src": "1314:20:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_array$_t_address_$dyn_memory_ptr_$returns$__$",
@@ -2067,7 +2067,7 @@
                         "referencedDeclaration": 16,
                         "src": "1495:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                           "typeString": "contract SponsorWhitelistControl"
                         }
                       },
@@ -2078,7 +2078,7 @@
                       "lValueRequested": false,
                       "memberName": "removePrivilege",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 1833,
+                      "referencedDeclaration": 1856,
                       "src": "1495:23:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_array$_t_address_$dyn_memory_ptr_$returns$__$",
@@ -2173,7 +2173,7 @@
         169
       ],
       "SponsorWhitelistControl": [
-        1834
+        1857
       ]
     },
     "id": 170,
@@ -2196,7 +2196,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 170,
-        "sourceUnit": 1835,
+        "sourceUnit": 1858,
         "src": "28:39:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -2298,17 +2298,17 @@
             "stateVariable": true,
             "storageLocation": "default",
             "typeDescriptions": {
-              "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+              "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
               "typeString": "contract SponsorWhitelistControl"
             },
             "typeName": {
               "id": 9,
               "name": "SponsorWhitelistControl",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 1834,
+              "referencedDeclaration": 1857,
               "src": "340:23:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                 "typeString": "contract SponsorWhitelistControl"
               }
             },
@@ -2386,10 +2386,10 @@
                 "name": "SponsorWhitelistControl",
                 "nodeType": "Identifier",
                 "overloadedDeclarations": [],
-                "referencedDeclaration": 1834,
+                "referencedDeclaration": 1857,
                 "src": "391:23:0",
                 "typeDescriptions": {
-                  "typeIdentifier": "t_type$_t_contract$_SponsorWhitelistControl_$1834_$",
+                  "typeIdentifier": "t_type$_t_contract$_SponsorWhitelistControl_$1857_$",
                   "typeString": "type(contract SponsorWhitelistControl)"
                 }
               },
@@ -2404,7 +2404,7 @@
               "src": "391:76:0",
               "tryCall": false,
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                 "typeString": "contract SponsorWhitelistControl"
               }
             },
@@ -3780,7 +3780,7 @@
                         "referencedDeclaration": 16,
                         "src": "1314:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                           "typeString": "contract SponsorWhitelistControl"
                         }
                       },
@@ -3791,7 +3791,7 @@
                       "lValueRequested": false,
                       "memberName": "addPrivilege",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 1826,
+                      "referencedDeclaration": 1849,
                       "src": "1314:20:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_array$_t_address_$dyn_memory_ptr_$returns$__$",
@@ -4099,7 +4099,7 @@
                         "referencedDeclaration": 16,
                         "src": "1495:7:0",
                         "typeDescriptions": {
-                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1834",
+                          "typeIdentifier": "t_contract$_SponsorWhitelistControl_$1857",
                           "typeString": "contract SponsorWhitelistControl"
                         }
                       },
@@ -4110,7 +4110,7 @@
                       "lValueRequested": false,
                       "memberName": "removePrivilege",
                       "nodeType": "MemberAccess",
-                      "referencedDeclaration": 1833,
+                      "referencedDeclaration": 1856,
                       "src": "1495:23:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_external_nonpayable$_t_array$_t_address_$dyn_memory_ptr_$returns$__$",
@@ -4204,7 +4204,7 @@
   },
   "networks": {},
   "schemaVersion": "3.2.0",
-  "updatedAt": "2020-12-07T14:10:26.239Z",
+  "updatedAt": "2020-12-08T14:29:20.611Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

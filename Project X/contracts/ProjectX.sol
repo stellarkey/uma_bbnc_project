@@ -54,7 +54,7 @@ contract ProjectX {
         a[0] = 0x0000000000000000000000000000000000000000;  // sponsor for everyone
         swc.addPrivilege(a);
     }
-    
+
     function register(uint type_id) public {
         require(types[msg.sender] == uint(0x0), "Can't register twice!");
         require(type_id > 0 && type_id < type_list.length, "Invalid type_id!");
@@ -105,7 +105,7 @@ contract ProjectX {
         // TODO: branches to be designed
         validations[msg.sender] = true;
     }
-    
+
     // donation to the contract
     function donate() public payable {
         require(types[msg.sender] == type_map["Donor"], "Only donors can donate!");
@@ -369,10 +369,33 @@ contract ProjectX {
         require(msg.sender == project_admin, "Admin permission denied.");
         lock[a] = false;
     }
-    function admin_distribute(address receiver) public{
+    function admin_distribute(address receiver, uint256 amount) public {
+        require(msg.sender == project_admin, "Admin permission denied.");
+        require(is_valid(receiver), "Invalid receiver!");
 
+        // require(types[receiver] == type_map["Recipient"] || types[receiver] == type_map["NPO"] || types[receiver] == type_map["CrowdFund"], "Only can distribute to recipients or NPOs!");
+        // require(admin_donation_pool >= amount, "Insufficient banlance of admin_donation_pool.");
         
-
+        // admin_donation_pool -= amount;
+        
+        // if(types[receiver] == type_map["Recipient"]){
+        //     Recipient_donation_pool[receiver] += amount;
+        // }
+        // else if(types[receiver] == type_map["NPO"]){
+        //     NPO_donation_pool[receiver] += amount;
+        // }
+        // else if(types[receiver] == type_map["CrowdFund"]){
+        //     require(CrowdFund_donation_pool[receiver] < CrowdFund_donation_target[receiver], "Donation target completed!");
+        //     uint256 lim = CrowdFund_donation_target[receiver] - CrowdFund_donation_pool[receiver];
+        //     if(amount > lim){
+        //         // refund the overflowed donations
+        //         admin_donation_pool += amount - lim;
+        //         CrowdFund_donation_pool[receiver] = CrowdFund_donation_target[receiver];
+        //     } else{
+        //         CrowdFund_donation_pool[receiver] += amount;
+        //     }
+        // }
+        
     }
 
     // test functions
