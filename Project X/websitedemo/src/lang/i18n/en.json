@@ -1,0 +1,115 @@
+{
+  "signin": {
+    "title": "Log In",
+    "text": {
+      "new": "New to Decentralized Charity? "
+    },
+    "buttons": {
+      "signin": "Sign in to Decentralized Charity"
+    },
+    "links" : {
+      "forgot_password": "Forgot password",
+      "signup": "Recover by seed"
+    },
+    "input_text": {
+      "email": "Email address",
+      "email_description": "Let us know your email. We'll never share your email with anyone else.",
+      "password": "Password",
+      "password_description": "Please choose a strong password and don't tell to anyone else."
+    },
+    "error": {
+      "title": "Something wrong happen !!!",
+      "message": "Wrong username or password. If you still not register an account? ",
+      "close": "Close"
+    }
+  },
+  "register": {
+    "title": "Sign Up",
+    "text": {
+      "registered": "Already signed up? "
+    },
+    "buttons": {
+      "register": "Register",
+      "reset": "Reset"
+    },
+    "links": {
+      "signin": "Sign in"
+    },
+    "input_text": {
+      "firstname": "Firstname",
+      "lastname": "Lastname",
+      "email": "Email address",
+      "password": "Password",
+      "confirm_password": "Confirm password"
+    },
+    "error": {
+      "title": "Something wrong happen !!!",
+      "message": "Unexpected error happen. Please try again later",
+      "close": "Close"
+    }
+  },
+  "forgot-password": {
+    "title": "Forgot password?",
+    "text": {
+      "description": "Enter the email address you used to sign up and we'll send you a link to reset your password.",
+      "alert": "Reset instructions sent to "
+    },
+    "buttons": {
+      "forgot": "Continue"
+    },
+    "input_text": {
+      "email": "Email address"
+    },
+    "error": {
+      "title": "Something wrong happen !!!",
+      "message": "Account/email does not exist, please ensure that you input correctly your email.",
+      "close": "Close"
+    }
+  },
+  "reset-password": {
+    "title": "Reset password",
+    "buttons": {
+      "reset": "Reset"
+    },
+    "text": {
+      "alert": "You can reset your password by inputting a new one below."
+    },
+    "input_text": {
+      "password": "Password",
+      "confirm_password": "Confirm password"
+    },
+    "error": {
+      "title": "Something wrong happen !!!",
+      "message": "We cannot proceed your request at the moment. Please try again later.",
+      "close": "Close"
+    }
+  },
+  "reset-password-expired": {
+    "title": "Password Recovery",
+    "text": {
+      "description": "It looks like the link you clicked has expired. Please try requesting another reset."
+    },
+    "buttons": {
+      "signin": "BACK TO LOGIN SCREEN"
+    }
+  },
+  "verify-email": {
+    "title": "Email Verification",
+    "text": {
+      "alert": "Verify your email successfully!!!",
+      "goto": "You can go to "
+    },
+    "links": {
+      "signin": "Sign in"
+    }
+  },
+  "verify-email-expired": {
+    "title": "Email Verification",
+    "text": {
+      "description": "It looks like the link you clicked has expired. Please try requesting another email verification."
+    },
+    "buttons": {
+      "signin": "BACK TO LOGIN SCREEN"
+    }
+  }
+}
