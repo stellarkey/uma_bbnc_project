@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
-
+import Account from "@/components/Account"
 Vue.use(Router)
 
 let router = new Router({
@@ -12,6 +12,12 @@ let router = new Router({
       path: '/',
       name: 'Home',
       component: Home
+    },
+    {
+      path: '/account',
+      name: 'Account',
+      component: Account,
+      meta: { requiresAuth: true}
     },
     {
       path: '/projects',
@@ -72,7 +78,7 @@ let router = new Router({
 
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (this.$store.getters.isLoggedIn) {
+    if (localStorage.getItem('password') === 'asdasdasd') {
       next()
       return
     }

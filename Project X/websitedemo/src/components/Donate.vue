@@ -41,7 +41,10 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
   export default {
+
     data() {
       return {
         amount: 0,
@@ -68,11 +71,39 @@
       }
     },
     computed: {
+      ...mapState('account', ['user', 'status']),
+      ...mapState('donations', ['balance']),
     },
     methods: {
+      ...mapActions('donations', ['makeDonation', 'updateBalance']),
       donate() {
-        this.$root.$emit('bv::hide::modal', 'modal-profile', '#btnShow')
-        this.$root.$emit('bv::hide::modal', 'modal-donate', '#btnShow')
+        if (!this.status.isLoggedIn) {
+          alert('Log in first!')
+        } else {
+          if (Number(this.amount) > this.balance) {
+            alert('Only have ' + String(this.balance) + 'CFX')
+          } else {
+            let type = 'NPO'
+            switch (this.accountType) {
+              case 2:
+                type = 'NPO'
+                break;
+              case 3:
+                type = 'Recipient'
+                break;
+              case 4:
+                type = 'CrowdFund'
+            }
+            let d = new Date();
+            let publishDate= d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+            let tmpAmount = Number(this.amount)
+            let data = { donor_name: 'John', Amount: tmpAmount, Date: publishDate, TxId: '7E875BC96056A16C051BE55E67717D7A9CA40281B999F2257FBF', 'Recipient': this.account, 'Type': type}
+            this.makeDonation({ data })
+            this.updateBalance({ tmpAmount })
+            this.$root.$emit('bv::hide::modal', 'modal-profile', '#btnShow')
+            this.$root.$emit('bv::hide::modal', 'modal-donate', '#btnShow')
+          }
+        }
       },
       cancel() {
         this.$root.$emit('bv::hide::modal', 'modal-donate', '#btnShow')

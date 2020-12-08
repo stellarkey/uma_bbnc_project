@@ -19,13 +19,11 @@
           <b-nav-form>
             <b-form-input size="sm" placeholder="Search"></b-form-input>
           </b-nav-form>
-          <b-nav-item-dropdown right :text="username" v-if="status.isLoggedIn">
+          <b-nav-item-dropdown right text="John" v-if="status.isLoggedIn">
             <b-dropdown-item v-on:click="signout"><span>Sign Out</span></b-dropdown-item>
           </b-nav-item-dropdown>
           <b-nav-item right v-else><router-link v-bind:to="{name: 'SignIn'}">Log in</router-link></b-nav-item>
-          <div class="sign-in-user-avatar">
-            <b-img src="https://graph.facebook.com/v2.3/10206470121935600/picture?" v-if="status.isLoggedIn"></b-img>
-          </div>
+          <b-nav-item right v-if="status.isLoggedIn"><router-link v-bind:to="{name: 'Account'}">Account</router-link></b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

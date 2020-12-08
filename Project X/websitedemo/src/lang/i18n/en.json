@@ -19,7 +19,7 @@
     },
     "error": {
       "title": "Something wrong happen !!!",
-      "message": "Wrong username or password. If you still not register an account? ",
+      "message": "Wrong password.",
       "close": "Close"
     }
   },

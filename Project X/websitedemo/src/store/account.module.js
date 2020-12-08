@@ -1,23 +1,32 @@
 import { userService } from 'service'
 
-const user = JSON.parse(localStorage.getItem('user'));
-const state = user
-    ? { status: { isLoggedIn: true }, user }
+const password = localStorage.getItem('password');
+console.log(password, 'aasd')
+const state = password === 'asdasdasd'
+    ? { status: { isLoggedIn: true }, password }
     : { status: {}, user: {} };
 
 const actions = {
   signIn ({ commit }, {email, password}) {
     return new Promise((resolve, reject) => {
-      userService.signIn(email, password).then(res => {
-        localStorage.setItem('user', JSON.stringify(res.data))
-        localStorage.token = res.data.data.token
-        commit('set_user', res.data)
-        resolve(res)
-      }).catch(err => {
-        localStorage.removeItem('user')
-        delete localStorage.token
-        reject(err)
-      })
+      if (password === 'asdasdasd') {
+        localStorage.setItem('password', password)
+        commit('set_user', 'user')
+        resolve(true)
+      } else {
+        localStorage.removeItem('password')
+        reject('wrong password')
+      }
+      // userService.signIn(email, password).then(res => {
+      //   localStorage.setItem('user', JSON.stringify(res.data))
+      //   localStorage.token = res.data.data.token
+      //   commit('set_user', res.data)
+      //   resolve(res)
+      // }).catch(err => {
+      //   localStorage.removeItem('user')
+      //   delete localStorage.token
+      //   reject(err)
+      // })
     })
   },
 
@@ -33,14 +42,16 @@ const actions = {
 
   signOut ({ commit }) {
     return new Promise((resolve, reject) => {
-      userService.signOut().then(res => {
-        commit('sign_out')
-        localStorage.removeItem('user')
-        delete localStorage.token
-        resolve(res)
-      }).catch(err => {
-        reject(err)
-      })
+      commit('sign_out')
+      localStorage.removeItem('password')
+      resolve(true)
+      // userService.signOut().then(res => {
+      //   commit('sign_out')
+      //   localStorage.removeItem('password')
+      //   resolve(res)
+      // }).catch(err => {
+      //   reject(err)
+      // })
     })
   },
 
