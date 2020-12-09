@@ -11,4 +11,4 @@ npm install
 ```
 npm run serve
 ```
-![home](./Project X/imgs/home.jpg)
+![home](./Project%20X/imgs/home.jpg)
