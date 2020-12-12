@@ -33,7 +33,7 @@ Our ultimate goal is to bring a new era on charity, and everyone will benefit fr
 
 ![Win-Win for Everyone](README/image-20201212195346366.png)
 
-# Code 后端代码
+# Contract 后端设计
 
 The code is developed according to the flowchart we designed.
 
@@ -51,7 +51,7 @@ Despite finished all the initial design of our project, we still have many ideas
 >
 > We designed `CouponCoin` for the future, cause we wanna introduce a couple system someday to make sure that specified donation is becoming coupons that can only be used in specified scenario or specified goods.
 
-# Website
+# Website 前端设计
 
 our Demo website: [**http://donate.confluxcharity.xyz/**](http://donate.confluxcharity.xyz/)
 
