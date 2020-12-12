@@ -154,30 +154,30 @@ contract ProjectX {
         
     }
 
-    // Buy all kinds of goods from vendors
-    function buy_goods(uint256 goods_number, uint quantity) public payable {
-        require(is_valid(msg.sender), "Invalid sender!");
-        require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
-        require(goods_valid[goods_number], "Invalid goods.");
+// Buy all kinds of goods from vendors
+function buy_goods(uint256 goods_number, uint quantity) public payable {
+    require(is_valid(msg.sender), "Invalid sender!");
+    require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
+    require(goods_valid[goods_number], "Invalid goods.");
 
-        if(types[msg.sender] == type_map["Recipient"]){
-            require(Recipient_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Not enough tokens.");
+    if(types[msg.sender] == type_map["Recipient"]){
+        require(Recipient_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Not enough tokens.");
 
-            Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
-            // // refund the overflows
-            //msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
-            Recipient_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
-        } else{
-            require(NPO_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Insuffcient NPO's donation pool.");
-            
-            Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
-            
-            NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
-        }
-
-        // refund misprovided CFXs (if there are any)
-        msg.sender.transfer(msg.value);
+        Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+        // // refund the overflows
+        //msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
+        Recipient_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
+    } else{
+        require(NPO_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Insuffcient NPO's donation pool.");
+        
+        Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+        
+        NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
     }
+
+    // refund misprovided CFXs (if there are any)
+    msg.sender.transfer(msg.value);
+}
 
     // Only NPO to Recipient
     // all amount'unit is Drip

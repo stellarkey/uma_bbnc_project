@@ -55,6 +55,42 @@ All the functions supporting is implemented in a single contract.
 >
 > ![gaslimit](README/image-20201212204926527.png)
 
+## Coding Details 代码细节
+
+Our main contract:
+
+![contract code](README/image-20201212194737279.png)
+
+### Initialization
+
+We set *admin info*, *type info*, *staking info* and *sponsorship info* in the constructor.
+
+```c
+// initialization
+constructor() {
+    // admin settings
+    project_admin = msg.sender;
+    admin_donation_pool = 0;
+
+    // type settings
+    for(uint i = 1; i < type_list.length; i++){
+        type_map[ type_list[i] ] = i;
+    }
+
+    // staking price initializaions
+    staking_price["Recipient"] = 23 * 1e18;
+    staking_price["NPO"] = 233 * 1e18;
+    staking_price["Vendor"] = 666 * 1e18;
+    staking_price["CrowdFund"] = 2333 * 1e18;
+
+    // Whitelist sponsor settings
+    SponsorWhitelistControl swc = SponsorWhitelistControl(0x0888000000000000000000000000000000000001); // Whitelist contract address
+    address[] memory a = new address[](1);
+    a[0] = 0x0000000000000000000000000000000000000000;  // sponsor for everyone
+    swc.addPrivilege(a);
+}
+```
+
 ### Registration
 
 Our project requires registration and validation before any form of partictpantion.
@@ -108,25 +144,138 @@ function validate() public {
 
 `donate_to` as p2p donation:
 
+```c
+// Donor: p2p donation using CFX
+function donate_to(address payable receiver) public payable {
+    require(is_valid(msg.sender), "Invalid sender!");
+    require(is_valid(receiver), "Invalid receiver!");
 
+    require(types[receiver] != uint(0x0), "Unregistered receiver!");
+    require(types[msg.sender] == type_map["Donor"], "Only donors can donate!");
+    require(types[receiver] != type_map["Donor"], "Only NOT donors can be donated to!");
+    require(types[receiver] != type_map["Vendor"], "Only NOT vendors can be donated to!");
+
+    require(msg.value > 0, "Invalid donation!");
+
+    // Seperate situations
+    if(types[receiver] == type_map["Recipient"]){
+        // support transferring directly from sender to receiver
+        
+        Recipient_donation_pool[receiver] += msg.value;
+        //receiver.transfer(msg.value);
+        donation_record[msg.sender] += msg.value;
+    }
+    else if(types[receiver] == type_map["NPO"]){
+        NPO_donation_pool[receiver] += msg.value;
+        donation_record[msg.sender] += msg.value;
+    }
+    else if(types[receiver] == type_map["CrowdFund"]){
+        require(CrowdFund_donation_pool[receiver] < CrowdFund_donation_target[receiver], "Donation target completed!");
+        uint256 lim = CrowdFund_donation_target[receiver] - CrowdFund_donation_pool[receiver];
+        if(msg.value > lim){
+            // refund the overflowed donations
+            msg.sender.transfer(msg.value - lim);
+            CrowdFund_donation_pool[receiver] = CrowdFund_donation_target[receiver];
+            donation_record[msg.sender] += lim;
+        } else{
+            CrowdFund_donation_pool[receiver] += msg.value;
+            donation_record[msg.sender] += msg.value;
+        }
+    }
+    
+}
+```
+
+![donate_to](README/image-20201212210425329.png)
 
 ### Consumption
 
+We support goods cosumption in the system.
+
+`buy_goods`:
+
+```c
+// Buy all kinds of goods from vendors
+function buy_goods(uint256 goods_number, uint quantity) public payable {
+    require(is_valid(msg.sender), "Invalid sender!");
+    require(types[msg.sender] == type_map["Recipient"] || types[msg.sender] == type_map["NPO"], "Only recipients and NPOs can buy goods from vendors!");
+    require(goods_valid[goods_number], "Invalid goods.");
+
+    if(types[msg.sender] == type_map["Recipient"]){
+        require(Recipient_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Not enough tokens.");
+
+        Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+        // // refund the overflows
+        //msg.sender.transfer(msg.value - goods_price[goods_number] * quantity);
+        Recipient_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
+    } else{
+        require(NPO_donation_pool[msg.sender] >= goods_price[goods_number] * quantity, "Insuffcient NPO's donation pool.");
+        
+        Vendor_pool[ goods_providing_vendor[goods_number] ] += goods_price[goods_number] * quantity;
+        
+        NPO_donation_pool[msg.sender] -= goods_price[goods_number] * quantity;
+    }
+
+    // refund misprovided CFXs (if there are any)
+    msg.sender.transfer(msg.value);
+}
+```
+
 ### Specified Functionality
+
+As we mentioned in the overview.
+
+NPOs can redistribe donations into recipients just like the flowchart has designed.
+
+Vendors shall manage the goods.
+
+The system offer vendors and recipients a way to withdraw their tokens. Because all the donations is running under the contract, and the contract is the only one holding the tokens for now.
+
+> We can add safety mechanism through this, for instance we can `lock` one’s address to avoid `withdraw` in case bad behaviors happend.
+
+![Specified Functionality](README/image-20201212211006663.png)
 
 ### Sponsorship
 
+We support sponsorship in the contract.
+
+`sponsor_gas` and `sponsor_collateral`. So the participants won’t pay for the transaction.
+
+> We might need to add some safety mechanism in the future to avoid attacks like DDoS.
+
 ### View Funcitons
+
+There are also some view-only functions to display the system parameters.
+
+![view functions](README/image-20201212210600695.png)
 
 ### Administration
 
+We enable the administration management in the system for now, until we figured out a better safety insurance design.
 
-
-## Coding Details 代码细节
-
-Our main contract:
-
-![contract code](README/image-20201212194737279.png)
+```c
+/// admin control
+///
+// Caution: amount's unit is Drip.
+function set_staking_price(uint type_id, uint256 amount) public {
+    require(msg.sender == project_admin, "Admin permission denied.");
+    require(type_id > 0 && type_id < type_list.length, "Invalid type_id!");
+    staking_price[type_list[type_id]] = amount;
+}
+// admin can lock adresses with suspicious behaviors
+function lock_address(address a) public {
+    require(msg.sender == project_admin, "Admin permission denied.");
+    lock[a] = true;
+    validations[a] = false;
+}
+function unlock(address a) public {
+    require(msg.sender == project_admin, "Admin permission denied.");
+    lock[a] = false;
+}
+function admin_distribute(address receiver, uint256 amount) public {
+    require(msg.sender == project_admin, "Admin permission denied.");
+    require(is_valid(receiver), "Invalid receiver!");
+```
 
 ## Future Developing 可扩展性
 
